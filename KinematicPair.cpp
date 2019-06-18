@@ -683,7 +683,7 @@ void KinematicPair::EstOri0Loc1Param(std::vector<MotionMatrixd> &dest, const std
 	for (it = src.begin(); it!=src.end(); it++){ 
 		cen += it->T(); 
 	}
-    cen /= src.size();
+    cen /= static_cast<double>(src.size());
     /* calculate covariance matrix */
 	Eigen::Matrix3d a = Eigen::Matrix3d::Zero();
     for (it = src.begin(); it != src.end(); it++){
@@ -971,7 +971,7 @@ void KinematicPair::RefineOri0Loc1(std::vector<MotionMatrixd> &dest, const std::
 	for (it = src.begin(); it != src.end(); it++){ 
 		cen += it->T(); 
 	}
-    cen /= src.size();
+    cen /= static_cast<double>(src.size());
     dest2 = 0.0;
     for (it = src.begin(); it != src.end(); it++){
 		MotionMatrixd pos;

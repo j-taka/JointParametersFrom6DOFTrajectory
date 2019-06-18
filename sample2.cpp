@@ -1,4 +1,10 @@
 // main2.cpp
+// sample1.cpp
+// esitmate the parameters of a double-revolute joint
+
+#ifndef _USE_PCL
+#define _USE_MATH_DEFINES
+#endif
 
 #include <iostream>
 #include <iomanip>
@@ -10,19 +16,24 @@
 #include "eigen_matrix_utility.h"
 
 // pcl
+#ifdef _USE_PCL
 #include <boost/thread/thread.hpp>
 #include <pcl/common/common_headers.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#endif
 
 const size_t NUM_OF_DATA = 100;
 
 // global variables
+#ifdef _USE_PCL
 boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
+#endif
 int count(0);
 bool correct(false); 
 std::vector<MotionMatrixd> trjs;
 std::vector<MotionMatrixd> cor_trjs;
 
+#ifdef _USE_PCL
 boost::shared_ptr<pcl::visualization::PCLVisualizer> InitializeViewer()
 {
 	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("Renderer"));
@@ -56,6 +67,7 @@ void updateViewer()
 	viewer->addLine(pcl::PointXYZ(cen[0], cen[1], cen[2]), pcl::PointXYZ(cen[0] + yd[0], cen[1] + yd[1], cen[2] + yd[2]), 0.0, 1.0, 0.0, "line2");
 	viewer->addLine(pcl::PointXYZ(cen[0], cen[1], cen[2]), pcl::PointXYZ(cen[0] + zd[0], cen[1] + zd[1], cen[2] + zd[2]), 0.0, 0.0, 1.0, "line3");
 }
+#endif
 
 static void Evaluation(double &tr_err, double &rot_err, const std::vector<MotionMatrixd> &src, const std::vector<MotionMatrixd> &gt)
 {
@@ -122,6 +134,7 @@ int main(int argc, char **argv)
 	std::cout << "Error in intermediate - Orientation: " << rot_err << " " << " Translation: " << tr_err << std::endl;
 	Evaluation(tr_err, rot_err, cor_trjs, gt_motion);
 	std::cout << "Error in correction - Orientation: " << rot_err << " " << " Translation: " << tr_err << std::endl;
+#ifdef _USE_PCL
 	viewer = InitializeViewer();
 	while (!viewer->wasStopped()){
 		updateViewer();
@@ -139,5 +152,6 @@ int main(int argc, char **argv)
 		viewer->spinOnce();
 		boost::this_thread::sleep(boost::posix_time::microseconds(10));
 	}
+#endif
 	return 0;
 }

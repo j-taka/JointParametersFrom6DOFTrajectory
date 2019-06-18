@@ -15,7 +15,7 @@ I hope to implement the function for screw joint in future...
  - PolynomialSolver (get from git server)
  - OpenCV (used in PolynomialSolver)
  - UtilForEigen (get from git server)
- - GNU Scientific Library (downloaded from the web)
+ - GNU Scientific Library (downloaded from the web [https://www.bruot.org/hp/libraries/])
 
 For compiling samples
  - Point Cloud Library (downloaded from the web, to use visualization)
