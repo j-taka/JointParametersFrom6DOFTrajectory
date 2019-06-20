@@ -18,12 +18,19 @@ I hope to implement the function for screw joint in future...
  - GNU Scientific Library (downloaded from the web [https://www.bruot.org/hp/libraries/])
 
 For compiling samples
- - Point Cloud Library (downloaded from the web, to use visualization)
  - Boost
+ - ArUco (openCV contrib)
+ - Point Cloud Library (optional) (downloaded from the web, to use visualization)
 
 # Compile
 1. Use cmake to make project file
 2. just compile it
 
 # Test samples
-Just run the execution with no command parameters
+Just run the execution with no command parameters from sample1 to sample3
+> EstimateRevoluteJoint.exe
+> EstimateDoubleRevoluteJoint.exe
+> EstimateSphericalJoint.exe
+
+For executing sample4
+> EstimateRevoluteJointUsingMarker.exe -d=10 -l=0.141 -c="calib.xml" -v="door.mp4"
