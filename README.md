@@ -12,10 +12,10 @@ I hope to implement the function for screw joint in future...
 
 # Requirement
  - CMake
- - PolynomialSolver (get from git server)
+ - [PolynomialSolver](https://github.com/j-taka/PolynomialSolver)
  - OpenCV (used in PolynomialSolver)
- - UtilForEigen (get from git server)
- - GNU Scientific Library (downloaded from the web [https://www.bruot.org/hp/libraries/])
+ - [UtilForEigen] (https://github.com/j-taka/UtilsForEigen)
+ - [GNU Scientific Library] (https://www.bruot.org/hp/libraries/)
 
 For compiling samples
  - Boost
@@ -29,7 +29,9 @@ For compiling samples
 # Test samples
 Just run the execution with no command parameters from sample1 to sample3
 > EstimateRevoluteJoint.exe
+
 > EstimateDoubleRevoluteJoint.exe
+
 > EstimateSphericalJoint.exe
 
 For executing sample4
