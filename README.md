@@ -1,5 +1,9 @@
 This program is for estimating joint parameters from 6DOF relative trajectory between two links.
 
+See the details from 
+1. Yoshihiro Sato, Jun Takamatsu, Hiroshi Kimura, Katsushi Ikeuchi, “Recognition of a Mechanical Linkage Based on Occlusion-Robust Object Tracking,” IEEE International Conference on Multisensor Fusion and Integration for Intelligent Systems (MFI2003) , 2003.
+2. Jun Takamatsu, “Abstraction of Manipulation Tasks to Automatically Generate Robot Motion from Observation,” Ph.D. Thesis , the University of Tokyo, Feb. 2004
+
 # Introduction
 
 The joint to be hundled are
