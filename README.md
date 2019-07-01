@@ -18,8 +18,8 @@ I hope to implement the function for screw joint in future...
  - CMake
  - [PolynomialSolver](https://github.com/j-taka/PolynomialSolver)
  - OpenCV (used in PolynomialSolver)
- - [UtilForEigen] (https://github.com/j-taka/UtilsForEigen)
- - [GNU Scientific Library] (https://www.bruot.org/hp/libraries/)
+ - [UtilForEigen](https://github.com/j-taka/UtilsForEigen)
+ - [GNU Scientific Library](https://www.bruot.org/hp/libraries/)
 
 For compiling samples
  - Boost
