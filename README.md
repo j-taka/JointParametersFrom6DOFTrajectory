@@ -39,4 +39,7 @@ Just run the execution with no command parameters from sample1 to sample3
 > EstimateSphericalJoint.exe
 
 For executing sample4
-> EstimateRevoluteJointUsingMarker.exe -d=10 -l=0.141 -c="calib.xml" -v="door.mp4"
+> EstimateRevoluteJointUsingMarker.exe -d=10 -l=0.141 -c="calib.xml" -v="door.mp4" -p="est_param.txt"
+
+After the estimation using sample4
+> DrawRevoluteJointFromMarker.exe -d=10 -l=0.141 -c="calib.xml" -v="door.mp4" -p="est_param.txt"
