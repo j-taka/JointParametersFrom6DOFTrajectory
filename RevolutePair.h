@@ -8,7 +8,9 @@ class RevolutePair : public KinematicPair
 {
 public:
 	RevolutePair() : KinematicPair(){}
-    void Estimation(std::vector<MotionMatrixd> &dest, const std::vector<MotionMatrixd> &src, EstError &dest2);
+	int Save(const std::string &filename) const;
+	int Load(const std::string &filename);
+	void Estimation(std::vector<MotionMatrixd> &dest, const std::vector<MotionMatrixd> &src, EstError &dest2);
 	void EstimationConsideringFreeDOF(std::vector<MotionMatrixd> &dest, const std::vector<MotionMatrixd> & src, const std::vector<MotionMatrixd> &orig, double &trans_err, size_t MAX_LOOP = 10);
 	void Print(std::ostream &dest) const;
     const Eigen::Vector3d& AxisDirection(int src) const; /* ‰ñ“]Ž²‚ÌŒü‚« */

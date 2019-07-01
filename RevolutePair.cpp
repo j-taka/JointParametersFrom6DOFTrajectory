@@ -4,6 +4,37 @@
 #include <iostream>
 #include <gsl/gsl_multimin.h>
 
+int RevolutePair::Save(const std::string &filename) const
+{
+	std::ofstream ofs(filename);
+	if (!ofs) {
+		return _FILENOTFOUND;
+	}
+	ofs << "Revolute" << std::endl;
+	SaveBase(ofs);
+	return 0;
+}
+
+int RevolutePair::Load(const std::string &filename)
+{
+	std::ifstream ifs(filename);
+	if (!ifs) {
+		return _FILENOTFOUND;
+	}
+	try {
+		std::string str;
+		ifs >> str;
+		if (str != "Revolute") {
+			return _FORMATERROR;
+		}
+		LoadBase(ifs);
+		return 0;
+	}
+	catch (...) {
+		return _FORMATERROR;
+	}
+}
+
 void RevolutePair::Estimation(std::vector<MotionMatrixd > &dest, const std::vector<MotionMatrixd > &src, EstError &dest2)
 {
     /* clear */

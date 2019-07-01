@@ -9,6 +9,7 @@
 
 #include <MotionMatrix.h>
 #include <vector>
+#include <fstream>
 
 typedef MotionMatrix<double> MotionMatrixd;
 
@@ -36,11 +37,16 @@ public:
 	enum TypeOfJoint { _FIXED, _REVOLUTE, _SPHERICAL, _PRISMATIC, _DOUBLE_REVOLUTE };
 	static const int TARGET = 0;
 	static const int BASE = 1;
+	static const int _FILENOTFOUND = -1;
+	static const int _FORMATERROR = -2;
 	/*! \brief constructor */
     KinematicPair() : _NEARLY_ZERO(1.0e-6) {}
     /*! \brief destroctor */
 	virtual ~KinematicPair(){}
-
+protected:
+	void SaveBase(std::ofstream &ofs) const;
+	void LoadBase(std::ifstream &ifs);
+public:
     virtual void Estimation(std::vector<MotionMatrixd> &dest, const std::vector<MotionMatrixd> &src, EstError &dest2) = 0;
 	virtual TypeOfJoint GetType() const = 0;
 	virtual void Print(std::ostream &dest) const = 0;

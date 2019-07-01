@@ -15,6 +15,27 @@
 #include <PolynomialSolver.h>
 #include <MonomialParser.h>
 
+//
+void KinematicPair::SaveBase(std::ofstream &ofs) const
+{
+	ofs << param.size() << std::endl;
+	for (size_t i(0); i < param.size(); ++i) {
+		ofs << param[i][0] << " " << param[i][1] << " " << param[i][2] << std::endl;
+	}
+}
+
+void KinematicPair::LoadBase(std::ifstream &ifs)
+{
+	size_t num;
+	ifs >> num;
+	param.resize(num);
+	for (size_t i(0); i < num; ++i) {
+		ifs >> param[i][0] >> param[i][1] >> param[i][2];
+	}
+}
+
+
+
 /*! \biref wmin in Singular Value Decomposition */
 static const double SVDEPSILON = 1.0e-6;
 
