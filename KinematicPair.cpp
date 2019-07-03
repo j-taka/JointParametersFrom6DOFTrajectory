@@ -159,6 +159,12 @@ void FDRotKPEstimate(const ::gsl_vector *xvec_ptr, void *params_ptr, double *f_p
 	DRotKPEstimate(xvec_ptr, params_ptr, df_ptr);
 }
 
+struct StKPParam
+{
+	Eigen::Matrix3d baseR;
+	const std::vector<MotionMatrixd> *motion;
+};
+
 /*! \brief calculate the correctness of the estimation in fixed and prismatic joint
  * \return value of the evaluation function 
  * \param xvec_ptr orientation (RPY)
@@ -166,18 +172,22 @@ void FDRotKPEstimate(const ::gsl_vector *xvec_ptr, void *params_ptr, double *f_p
  */
 double StKPEstimate(const ::gsl_vector *xvec_ptr, void *params)
 {
-	const std::vector<MotionMatrixd> *param_ptr = (std::vector<MotionMatrixd>*) params;
-    const Eigen::Matrix3d ro = RPY2Mat(Eigen::Vector3d(::gsl_vector_get(xvec_ptr, 0), ::gsl_vector_get(xvec_ptr, 1), ::gsl_vector_get(xvec_ptr, 2)));
+	const Eigen::Matrix3d baseR = ((StKPParam*)params)->baseR;
+	const std::vector<MotionMatrixd> *param_ptr = ((StKPParam*)params)->motion;
+    const Eigen::Matrix3d ro = RPY2Mat(Eigen::Vector3d(::gsl_vector_get(xvec_ptr, 0), ::gsl_vector_get(xvec_ptr, 1), ::gsl_vector_get(xvec_ptr, 2))) * baseR;
  
 	double res(0.0);
 	std::vector<MotionMatrixd>::const_iterator it;
     for (it = param_ptr->begin(); it != param_ptr->end(); it++){
         const Eigen::Matrix3d r = it->R();
         /* evaluation function is \sum_{i} (1 - \cos \theta) */
-        res += 0.5 * (3 - r(0, 0) * ro(0, 0) - r(0, 1) * ro(0, 1) - r(0, 2) * ro(0, 2)
+		res += 0.5 * (3 - (r * ro.transpose()).trace());
+		/*
+		res += 0.5 * (3 - r(0, 0) * ro(0, 0) - r(0, 1) * ro(0, 1) - r(0, 2) * ro(0, 2)
 						- r(1, 0) * ro(1, 0) - r(1, 1) * ro(1, 1) - r(1, 2) * ro(1, 2)
 						- r(2, 0) * ro(2, 0) - r(2, 1) * ro(2, 1) - r(2, 2) * ro(2, 2));
-    }
+						*/
+	}
     return res;
 }
 
@@ -190,7 +200,8 @@ double StKPEstimate(const ::gsl_vector *xvec_ptr, void *params)
  * param dest[2] : ÉàÅ[ÇÃïŒî˜ï™ */
 void DStKPEstimate(const ::gsl_vector *xvec_ptr, void *params, ::gsl_vector *df_ptr)
 {
-	const std::vector<MotionMatrixd> *param_ptr = (std::vector<MotionMatrixd>*) params;
+	const Eigen::Matrix3d baseR = ((StKPParam*)params)->baseR;
+	const std::vector<MotionMatrixd> *param_ptr = ((StKPParam*)params)->motion;
 	
 	const Eigen::Vector3d temp(::gsl_vector_get(xvec_ptr, 0), ::gsl_vector_get(xvec_ptr, 1), ::gsl_vector_get(xvec_ptr, 2));
     const Eigen::Matrix3d dr = RPYdR2Mat(temp);
@@ -203,7 +214,11 @@ void DStKPEstimate(const ::gsl_vector *xvec_ptr, void *params, ::gsl_vector *df_
     for (it = param_ptr->begin();it != param_ptr->end(); it++){
         /* Evaluatinon function is \sum_{i} (1 - \cos \theta) */
         const Eigen::Matrix3d r = it->R();
-        dest[0] += 0.5 * (3 - r(0, 0) * dr(0, 0) - r(0, 1) * dr(0, 1) - r(0, 2) * dr(0, 2)
+		dest[0] += 0.5 * (3 - (r * (dr * baseR).transpose()).trace());
+		dest[1] += 0.5 * (3 - (r * (dp * baseR).transpose()).trace());
+		dest[2] += 0.5 * (3 - (r * (dy * baseR).transpose()).trace());
+		/*
+		dest[0] += 0.5 * (3 - r(0, 0) * dr(0, 0) - r(0, 1) * dr(0, 1) - r(0, 2) * dr(0, 2)
 							- r(1, 0) * dr(1, 0) - r(1, 1) * dr(1, 1) - r(1, 2) * dr(1, 2)
 							- r(2, 0) * dr(2, 0) - r(2, 1) * dr(2, 1) - r(2, 2) * dr(2, 2));
 		dest[1] += 0.5 * (3 - r(0, 0) * dp(0, 0) - r(0, 1) * dp(0, 1) - r(0, 2) * dp(0, 2)
@@ -212,7 +227,8 @@ void DStKPEstimate(const ::gsl_vector *xvec_ptr, void *params, ::gsl_vector *df_
 		dest[2] += 0.5 * (3 - r(0, 0) * dy(0, 0) - r(0, 1) * dy(0, 1) - r(0, 2) * dy(0, 2)
 							- r(1, 0) * dy(1, 0) - r(1, 1) * dy(1, 1) - r(1, 2) * dy(1, 2)
 							- r(2, 0) * dy(2, 0) - r(2, 1) * dy(2, 1) - r(2, 2) * dy(2, 2));
-    }
+		*/
+	}
 	::gsl_vector_set(df_ptr, 0, dest[0]);
 	::gsl_vector_set(df_ptr, 1, dest[1]);
 	::gsl_vector_set(df_ptr, 2, dest[2]);
@@ -311,14 +327,16 @@ void KinematicPair::EstOri0Param(std::vector<MotionMatrixd> &dest, const std::ve
 	my_func.f = &StKPEstimate;
 	my_func.df = &DStKPEstimate;
 	my_func.fdf = &FDStKPEstimate;
-	my_func.params = (void*) &src;
+	StKPParam stkp_param;
+	stkp_param.baseR = src.front().R();
+	stkp_param.motion = &src;
+	my_func.params = (void*) &stkp_param;
 
 	/* set initial guess */
-	Eigen::Vector3d vec = Mat2RPY((Eigen::Matrix3d) src.front().R());
 	::gsl_vector *vec_p = ::gsl_vector_alloc(3);
-	::gsl_vector_set(vec_p, 0, vec[0]);
-	::gsl_vector_set(vec_p, 1, vec[1]);
-	::gsl_vector_set(vec_p, 2, vec[2]);
+	::gsl_vector_set(vec_p, 0, 0);
+	::gsl_vector_set(vec_p, 1, 0);
+	::gsl_vector_set(vec_p, 2, 0);
 	
 	const ::gsl_multimin_fdfminimizer_type *type_ptr = ::gsl_multimin_fdfminimizer_conjugate_fr;
 	::gsl_multimin_fdfminimizer *minimizer_ptr = ::gsl_multimin_fdfminimizer_alloc(type_ptr, my_func.n);
@@ -343,7 +361,10 @@ void KinematicPair::EstOri0Param(std::vector<MotionMatrixd> &dest, const std::ve
 		status = ::gsl_multimin_test_gradient(minimizer_ptr->gradient, tolerance);
 	} while (status == ::GSL_CONTINUE && iteration < max_iteration);
 	// set answer
-	const Eigen::Vector3d vec2(::gsl_vector_get(minimizer_ptr->x, 0), ::gsl_vector_get(minimizer_ptr->x, 1), ::gsl_vector_get(minimizer_ptr->x, 2));
+	const Eigen::Vector3d vec(::gsl_vector_get(minimizer_ptr->x, 0), ::gsl_vector_get(minimizer_ptr->x, 1), ::gsl_vector_get(minimizer_ptr->x, 2));
+	const Eigen::Matrix3d ro = RPY2Mat(vec) * stkp_param.baseR;
+	Eigen::Vector3d vec2 = Mat2RPY(ro);
+
     param.push_back(vec2);
     RefineOri0(dest, src, dest2);
 	// free 

@@ -110,6 +110,19 @@ ADD_EXECUTABLE(
 	${MY_UTILS}/eigen_matrix_utility.h
 )
 
+ADD_EXECUTABLE(
+	EstimatePrismaticJoint
+	sample6.cpp
+	KinematicPair.cpp
+	KinematicPair.h
+	PrismaticPair.cpp
+	PrismaticPair.h
+	${MY_POLY}/Monomial.cpp
+	${MY_POLY}/MonomialParser.cpp
+	${MY_UTILS}/MotionMatrix.h
+	${MY_UTILS}/eigen_matrix_utility.h
+)
+
 # compile option for msvc
 IF(MSVC)
 	SET(CMAKE_EXE_LINKER_FLAGS "/NODEFAULTLIB:LIBCMT.lib")
@@ -118,5 +131,6 @@ ENDIF()
 TARGET_LINK_LIBRARIES(EstimateRevoluteJoint ${GSL_LIBS} ${OpenCV_LIBS} ${PCL_LIBRARIES})
 TARGET_LINK_LIBRARIES(EstimateDoubleRevoluteJoint ${GSL_LIBS} ${OpenCV_LIBS} ${PCL_LIBRARIES})
 TARGET_LINK_LIBRARIES(EstimateSphericalJoint ${GSL_LIBS} ${OpenCV_LIBS} ${PCL_LIBRARIES})
+TARGET_LINK_LIBRARIES(EstimatePrismaticJoint ${GSL_LIBS} ${OpenCV_LIBS} ${PCL_LIBRARIES})
 TARGET_LINK_LIBRARIES(EstimateRevoluteJointUsingMarker ${GSL_LIBS} ${OpenCV_LIBS})
 TARGET_LINK_LIBRARIES(DrawRevoluteJointFromMarker ${GSL_LIBS} ${OpenCV_LIBS})
