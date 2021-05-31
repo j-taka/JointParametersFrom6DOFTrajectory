@@ -44,7 +44,7 @@ For executing sample4
 ![output_of_sample4](https://user-images.githubusercontent.com/11922392/60444303-e6d02800-9c57-11e9-84a0-abaa4d8602bc.gif)
 
 After the estimation using sample4
-> DrawRevoluteJointFromMarker.exe -d=10 -l=0.141 -c="calib.xml" -v="door.mp4" -p="est_param.txt"
+> DrawRevoluteJointFromMarker.exe -d=10 -l=0.141 -c="calib.xml" -v="door2.mp4" -p="est_param.txt"
 
 ![output_of_sample5](https://user-images.githubusercontent.com/11922392/60444304-e6d02800-9c57-11e9-86ca-5ec04adf5eda.gif)
 
